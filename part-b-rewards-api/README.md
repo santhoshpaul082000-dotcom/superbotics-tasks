@@ -1,59 +1,68 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SuperBotics – Rewards Redemption API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Tech Stack
+- Laravel 12
+- PHP 8.2
+- MySQL
+- React.js
+- Postman
 
-## About Laravel
+## Setup Instructions
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Clone the repository.
+2. Navigate to `part-b-rewards-api`.
+3. Run `composer install`.
+4. Copy `.env.example` to `.env`.
+5. Configure MySQL database credentials.
+6. Run `php artisan key:generate`.
+7. Run `php artisan migrate:fresh --seed`.
+8. Start the API using `php artisan serve`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## API Endpoints
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /api/redemptions | Redeem a product |
+| GET | /api/users/{id}/balance | Check points balance |
+| GET | /api/reports/redemptions | View redemption report |
 
-## Learning Laravel
+## Double-Spending Prevention
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+The redemption service uses a database transaction and row-level locking on the user record. This prevents simultaneous redemption requests for the same user from spending the same points.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Report Query and Index
 
-## Laravel Sponsors
+The report calculates total redemption count and points using SQL aggregate functions: COUNT and SUM.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+An index on created_at and category_id helps filter report records.
 
-### Premium Partners
+## Part C – Offline Scenario
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Store offline redemptions locally with unique transaction IDs. When internet returns, sync them to the server. Use idempotency keys and database transactions to prevent duplicate redemptions. Check the user's available points during synchronization.
 
-## Contributing
+Possible problems include duplicate requests, insufficient points, and synchronization conflicts.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Part D – Product Improvements
 
-## Code of Conduct
+1. Add redemption history so users can track their points.
+2. Send notifications after successful redemption.
+3. Add an admin dashboard to manage products and redemption limits.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## AI Log
 
-## Security Vulnerabilities
+1. Used AI to understand Laravel migrations and relationships.
+2. Used AI to implement the redemption service and API controllers.
+3. Used AI to understand Git commands and API testing.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+One issue: AI initially suggested an empty service method, which returned null. I identified this by checking the API response and then implemented the redemption logic.
 
-## License
+## Learning Log
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Learned Laravel service classes and Form Request validation.
+- Learned database transactions and row locking.
+- Learned how to test APIs using Postman.
+- The most challenging part was implementing redemption rules and preventing double-spending.
+
+## Current Status
+
+The backend APIs have been implemented and tested manually. Feature tests and React frontend are still pending.
