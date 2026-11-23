@@ -6,6 +6,7 @@ use App\Http\Controllers\API\RedemptionController;
 use App\Http\Controllers\API\BalanceController;
 use App\Http\Controllers\API\ReportController;
 
+use App\Http\Controllers\Api\ProductController;
 
 
 Route::get('/user', function (Request $request) {
@@ -19,3 +20,5 @@ Route::post('/redemptions', [RedemptionController::class, 'store']);
 Route::get('/users/{id}/balance', [BalanceController::class, 'show']);
 
 Route::get('/reports/redemptions', [ReportController::class, 'index']);
+
+Route::get('/products', [ProductController::class, 'index']);
